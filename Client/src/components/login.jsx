@@ -28,7 +28,7 @@ const Login = () => {
                     setToken(data.token);
                     setUser(data.user);
                     localStorage.getItem("token", data.token);
-                    setUser(true)
+                    setShowLogin(true)
                 } else {
                     toast.error(data.message);
                 }

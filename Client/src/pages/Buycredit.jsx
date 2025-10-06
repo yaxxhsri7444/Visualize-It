@@ -1,9 +1,59 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, {useContext} from "react";
 import {IoMdLock} from "react-icons/io";
 // eslint-disable-next-line no-unused-vars
-import { motion } from "motion/react";
+import {motion} from "motion/react";
+import {AppContext} from "../context/AppContext";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
+import axios from "axios";
 
 const Buycredit = () => {
+    const {user, backendUrl, loadCreditData, setShowLogin, token} = useContext(AppContext);
+    const navigate = useNavigate();
+
+    const initPay = async (order) =>{
+        const option = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            amount: order.amount,
+            currency: order.currency,
+            name:  'Credit Payment',
+            description:  'Credit Payment',
+            order_id: order.id,
+            receipt: order.receipt,
+            handler: async (response)=>{
+                console.log(response)
+            }
+        }
+
+        const rzp = new window.RazorPay(option)
+        rzp.open()
+    }
+
+    const payment = async (planId) => {
+        try {
+            if (!user) {
+                setShowLogin(true);
+            }
+
+            const {data} = await axios.post(
+                `${backendUrl}/auth/pay`,
+                {planId},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if(data.success){
+                initPay(data.order)
+
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
     return (
         <motion.divs
             className="flex flex-col justify-center items-center gap-4 min-h-[90vh] px-4"
@@ -26,7 +76,7 @@ const Buycredit = () => {
                     <p className="text-xl font-bold text-black">Basic</p>
                     <p className="text-gray-600">Best for personal use</p>
                     <p className="text-lg font-semibold text-teal-600">$10 / 100 Credits</p>
-                    <button className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all">
+                    <button onClick={()=>{payment(1)}} className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all">
                         Get Started
                     </button>
                 </div>
@@ -36,7 +86,7 @@ const Buycredit = () => {
                     <p className="text-xl font-bold">Advance</p>
                     <p className="text-gray-300">Best for business use</p>
                     <p className="text-lg font-semibold text-teal-400">$50 / 500 Credits</p>
-                    <button className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-white hover:text-black transition-all">
+                    <button onClick={()=>{payment(2)}} className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-white hover:text-black transition-all">
                         Get Started
                     </button>
                 </div>
@@ -46,7 +96,7 @@ const Buycredit = () => {
                     <p className="text-xl font-bold text-black">Business</p>
                     <p className="text-gray-600">Best for enterprise use</p>
                     <p className="text-lg font-semibold text-teal-600">$250 / 5000 Credits</p>
-                    <button className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all">
+                    <button onClick={()=>{payment(3)}} className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all">
                         Get Started
                     </button>
                 </div>

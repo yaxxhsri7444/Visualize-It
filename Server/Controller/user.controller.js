@@ -1,6 +1,8 @@
 import userModel from "../Models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import razorpay from "razorpay";
+import transactionModel from "../Models/transcition.model.js";
 
 export const userRegister = async (req, res) => {
   try {
@@ -78,6 +80,71 @@ export const userCredit = async (req, res) => {
       credit: user.creditBalance,
       user: { name: user.name },
     });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const razorpayInstance = new razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+export const paymentRazorpay = async (req, res) => {
+  try {
+    const { userId, planId } = req.body;
+    const userData = await usermodel.findById(userId);
+
+    if (!userId || !planId) {
+      return res.json({ sucess: false, message: "missing detail" });
+    }
+
+    let credit, plan, amount, data;
+
+    switch (planId) {
+      case "Basic":
+        plan = "Basic";
+        credit = 100;
+        amount = 10;
+        break;
+
+      case "Advance":
+        plan = "Advance";
+        credit = 500;
+        amount = 50;
+        break;
+
+      case "Business":
+        plan = "Business";
+        credit = 5000;
+        amount = 250;
+        break;
+
+      default:
+        return res.json({ sucess: false, message: "plan not found" });
+    }
+    date = Date.now();
+
+    const transacitionData = {
+      userId, plan, amount, credits, date
+    }
+
+    const Newtranscition = await transactionModel.create(transacitionData);
+
+    const option ={
+      amount: amount * 100,
+      currency: process.env.CURRENCY,
+      receipt: newTransacition._id,
+    }
+
+    await rozarpayInstance.order.create(option, (error, order)=> {
+      if(error){
+        console.log(error);
+        return res,json({success: false, message:error})
+      }
+      res.json({success: true})
+    })
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });

@@ -7,11 +7,11 @@ import {RxCross1} from "react-icons/rx";
 import {motion} from "motion/react";
 import axios from "axios";
 import {toast} from "react-toastify";
-import {AppContext} from "../context/appContext";
+import {AppContext} from "../context/AppContext";
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState("Login");
-    const {setShowLogin, backendUrl, setToken, setUser} = useContext(AppContext);
+    const {setShowLogin, user, backendUrl, setToken, setUser} = useContext(AppContext);
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -24,29 +24,28 @@ const Login = () => {
             if (isLogin === "Login") {
                 const {data} = await axios.post(`${backendUrl}/auth/login`, {email, password});
 
-                if (data.success) {
+                if (data.sucess) {
                     setToken(data.token);
                     setUser(data.user);
-                    localStorage.getItem("token", data.token);
-                    setShowLogin(true)
+                    localStorage.setItem("token", data.token);
+                    setShowLogin(false);
                 } else {
                     toast.error(data.message);
                 }
-                
             } else {
                 const {data} = await axios.post(`${backendUrl}/auth/register`, {name, email, password});
 
-                if (data.success) {
+                if (data.sucess) {
                     setToken(data.token);
                     setUser(data.user);
-                    localStorage.getItem("token", data.token);
-                    setShowLogin(true);
+                    localStorage.setItem("token", data.token);
+                    setShowLogin(false);
                 } else {
                     toast.error(data.message);
                 }
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || "An error occurred");
+            toast.error(error.message);
         }
     };
 

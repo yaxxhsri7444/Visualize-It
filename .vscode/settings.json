@@ -1,3 +1,4 @@
 {
-    "workbench.editor.alwaysShowEditorActions": false
+    "workbench.editor.alwaysShowEditorActions": false,
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

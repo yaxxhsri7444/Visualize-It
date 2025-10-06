@@ -13,7 +13,7 @@ const Footer = () => {
             <div>
                 <h1
                     className="text-2xl font-bold text-black cursor-pointer first-letter:capitalize hover:text-teal-600"
-                    onClick={navigate("/")}
+                    onClick={() => navigate("/")}
                 >
                     Viaualize It
                 </h1>

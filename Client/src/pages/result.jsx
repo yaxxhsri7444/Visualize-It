@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {BsStars} from "react-icons/bs";
 import {ImFolderDownload} from "react-icons/im";
 import {motion} from "motion/react";
+import {AppContext} from "../context/AppContext";
 
 const Result = () => {
     const [image, setImage] = useState("/sample_img_1.png");
@@ -10,8 +11,19 @@ const Result = () => {
     const [Loading, setLoading] = useState(false);
     const [input, setInput] = useState("");
 
-    const onSubmitHandler = async (e) => {
+    const {generateImage} = useContext(AppContext);
 
+    const onSubmitHandler = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if(input){
+            const image = await generateImage(input);
+            if (image) {
+                setIsImageLoading(true);
+                setImage(image)
+            }
+        }
+        setLoading(false);
     };
 
     return (

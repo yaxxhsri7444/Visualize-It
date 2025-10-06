@@ -4,7 +4,7 @@ import {GiFlatStar} from "react-icons/gi";
 import {BsStars} from "react-icons/bs";
 import {motion} from "motion/react";
 import {useNavigate} from "react-router-dom";
-import { AppContext } from "../context/appContext";
+import { AppContext } from "../context/AppContext";
 const Header = () => {
     const {user, setShowLogin} = useContext(AppContext);
     const navigate = useNavigate();

@@ -4,7 +4,7 @@ import {PiShootingStarBold} from "react-icons/pi";
 import {motion} from "motion/react";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
-import {AppContext} from "../context/appContext";
+import {AppContext} from "../context/AppContext";
 
 const Discription = () => {
     const {user, setShowLogin} = useState(AppContext);

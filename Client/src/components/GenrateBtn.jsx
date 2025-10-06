@@ -2,7 +2,7 @@
 import React, {useState} from "react";
 
 import {BsStars} from "react-icons/bs";
-import {AppContext} from "../context/appContext";
+import {AppContext} from "../context/AppContext";
 import {useNavigate} from "react-router-dom";
 import {motion} from "motion/react";
 import AppContextProvider from "../context/AppContextProvider";

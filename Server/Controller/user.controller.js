@@ -1,7 +1,7 @@
 import userModel from "../Models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import razorpay from "razorpay";
+import Razorpay from "razorpay";
 import transactionModel from "../Models/transcition.model.js";
 
 export const userRegister = async (req, res) => {
@@ -86,7 +86,7 @@ export const userCredit = async (req, res) => {
   }
 };
 
-const razorpayInstance = new razorpay({
+const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
@@ -94,57 +94,59 @@ const razorpayInstance = new razorpay({
 export const paymentRazorpay = async (req, res) => {
   try {
     const { userId, planId } = req.body;
-    const userData = await usermodel.findById(userId);
+    const userData = await userModel.findById(userId);
 
     if (!userId || !planId) {
-      return res.json({ sucess: false, message: "missing detail" });
+      return res.json({ success: false, message: "Missing details" });
     }
 
-    let credit, plan, amount, data;
-
+    let credit, plan, amount;
     switch (planId) {
       case "Basic":
         plan = "Basic";
         credit = 100;
         amount = 10;
         break;
-
       case "Advance":
         plan = "Advance";
         credit = 500;
         amount = 50;
         break;
-
       case "Business":
         plan = "Business";
         credit = 5000;
         amount = 250;
         break;
-
       default:
-        return res.json({ sucess: false, message: "plan not found" });
-    }
-    date = Date.now();
-
-    const transacitionData = {
-      userId, plan, amount, credits, date
+        return res.json({ success: false, message: "Plan not found" });
     }
 
-    const Newtranscition = await transactionModel.create(transacitionData);
+    const date = Date.now();
 
-    const option ={
-      amount: amount * 100,
+    const transactionData = {
+      userId,
+      plan,
+      amount,
+      credits: credit,
+      date,
+    };
+
+    const newTransaction = await transactionModel.create(transactionData);
+
+    const options = {
+      amount: amount * 100, // paise
       currency: process.env.CURRENCY,
-      receipt: newTransacition._id,
-    }
+      receipt: newTransaction._id.toString(),
+    };
 
-    await rozarpayInstance.order.create(option, (error, order)=> {
-      if(error){
+    razorpayInstance.orders.create(options, (error, order) => {
+      if (error) {
         console.log(error);
-        return res,json({success: false, message:error})
+        return res.json({ success: false, message: error.message });
       }
-      res.json({success: true})
-    })
+      res.json({ success: true, order });
+    });
+
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });

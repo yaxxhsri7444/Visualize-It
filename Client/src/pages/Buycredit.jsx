@@ -11,21 +11,27 @@ const Buycredit = () => {
     const {user, backendUrl, loadCreditData, setShowLogin, token} = useContext(AppContext);
     const navigate = useNavigate();
 
-    const initPay = async (order) => {
-        const option = {
+    const initPay = (order) => {
+        if (!window.Razorpay) {
+            toast.error("Razorpay SDK not loaded");
+            return;
+        }
+
+        const options = {
             key: import.meta.env.VITE_RAZORPAY_KEY_ID,
             amount: order.amount,
             currency: order.currency,
             name: "Credit Payment",
-            description: "Credit Payment",
+            description: "Payment for credits",
             order_id: order.id,
-            receipt: order.receipt,
-            handler: async (response) => {
-                console.log(response);
+            handler: function (response) {
+                console.log("Payment Success:", response);
+                toast.success("Payment Successful");
             },
+            theme: {color: "#14b8a6"},
         };
 
-        const rzp = new window.RazorPay(option);
+        const rzp = new window.Razorpay(options);
         rzp.open();
     };
 
@@ -53,7 +59,7 @@ const Buycredit = () => {
         }
     };
     return (
-        <motion.divs
+        <motion.div
             className="flex flex-col justify-center items-center gap-4 min-h-[90vh] px-4"
             initial={{opacity: 0.2, y: 100}}
             transition={{duration: 1}}
@@ -75,9 +81,7 @@ const Buycredit = () => {
                     <p className="text-gray-600">Best for personal use</p>
                     <p className="text-lg font-semibold text-teal-600">$10 / 100 Credits</p>
                     <button
-                        onClick={() => {
-                            payment(1);
-                        }}
+                        onClick={() => payment("Basic")}
                         className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all"
                     >
                         Get Started
@@ -91,7 +95,7 @@ const Buycredit = () => {
                     <p className="text-lg font-semibold text-teal-400">$50 / 500 Credits</p>
                     <button
                         onClick={() => {
-                            payment(2);
+                            payment("Advance");
                         }}
                         className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-white hover:text-black transition-all"
                     >
@@ -106,7 +110,7 @@ const Buycredit = () => {
                     <p className="text-lg font-semibold text-teal-600">$250 / 5000 Credits</p>
                     <button
                         onClick={() => {
-                            payment(3);
+                            payment("Business");
                         }}
                         className="mt-4 px-6 py-2 rounded-full bg-teal-600 text-white font-medium hover:bg-black transition-all"
                     >
@@ -114,7 +118,7 @@ const Buycredit = () => {
                     </button>
                 </div>
             </div>
-        </motion.divs>
+        </motion.div>
     );
 };
 

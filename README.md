@@ -60,6 +60,7 @@ Visualize-It
     ├── 📁 Middleware/
     │   └── 📄 auth.js
     ├── 📁 Models/
+    │   ├── 📄 transcition.model.js
     │   └── 📄 user.model.js
     ├── 📁 Routes/
     │   ├── 📄 imageRoute.js

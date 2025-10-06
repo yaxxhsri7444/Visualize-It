@@ -20,7 +20,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-6">
                         <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-black hover:bg-teal-600 transition duration-300">
                             <MdStars className="text-2xl text-teal-600" />
-                            <p className="text-white text-sm sm:text-base">Credits left: {credit}</p>
+                            <p onClick={() => navigate("/buy")} className="text-white text-sm sm:text-base">Credits left: {credit}</p>
                         </button>
                         <p className="text-black max-sm:hidden text-lg cursor-pointer">Hi, {user.name}</p>
                         <div className="relative inline-block group">
